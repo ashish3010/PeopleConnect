@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand / Primary */
+  --primary: #6c2cf2;
+  --primary-hover: #5a22d6;
+  --primary-active: #4c1fc1;
+  --primary-soft: #efe9ff;
+  --primary-muted: #d9ccff;
+
+  /* Backgrounds */
+  --bg-main: #f4f2ff; /* app background */
+  --bg-card: #ffffff; /* cards, modals */
+  --bg-muted: #f7f6ff; /* inputs, sections */
+  --bg-hover: #f0edff; /* hover states */
+
+  /* Text */
+  --text-primary: #1f1f2e; /* headings */
+  --text-secondary: #6b6f8a; /* body */
+  --text-muted: #9ca0b5; /* placeholder, hint */
+  --text-inverse: #ffffff; /* on primary */
+
+  /* Borders & Dividers */
+  --border: #e6e4f0;
+  --border-strong: #d8d6ea;
+
+  /* Status Colors */
+  --success: #22c55e;
+  --success-soft: #dcfce7;
+
+  --warning: #f59e0b;
+  --warning-soft: #fef3c7;
+
+  --danger: #ef4444;
+  --danger-soft: #fee2e2;
+
+  --info: #6366f1;
+  --info-soft: #e0e7ff;
+
+  /* Icons & UI Accents */
+  --icon-primary: #6c2cf2;
+  --icon-muted: #9ca0b5;
+  --icon-disabled: #c7cadb;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 6px 20px rgba(108, 44, 242, 0.12);
+  --shadow-lg: 0 12px 32px rgba(108, 44, 242, 0.16);
+
+  /* Radius (Matches UI Style) */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--text-primary);
+  font-family: Arial, Helvetica, sans-serif;
+}
