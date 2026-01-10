@@ -1,0 +1,18 @@
+// request for user info
+{
+  "email": "user@example.com"
+}
+// response for user info
+{
+  "id": "user1",
+  "name": "John Doe",
+  "email": "user@example.com",
+  "image": "https://example.com/images/user.png",
+  "role": "Member",
+  "department": "Engineering",
+  "organization": "Example Org",
+  "designation": "Software Engineer",
+  "linkedin": "https://www.linkedin.com/in/johndoe",
+  "github": "https://github.com/johndoe",
+  "website": "https://johndoe.com"  
+}   

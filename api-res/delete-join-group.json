@@ -1,0 +1,24 @@
+// join group
+{
+    "groupId": "12345",
+    "email": "user@example.com"
+}
+
+// response for join group
+{
+    "status": "success",
+    "message": "Joined group successfully"
+}
+
+
+// leave group
+{
+    "groupId": "12345",
+    "email": "user@example.com"
+}
+
+// response for leave group
+{
+    "status": "success",
+    "message": "Left group successfully"
+}

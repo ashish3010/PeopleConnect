@@ -1,0 +1,36 @@
+// request for group details
+{
+  "groupId": "group1"
+}
+
+// response for group details
+{
+  "id": "group1",
+  "name": "Group One",
+  "image": "https://example.com/images/group1.png",
+  "members": [
+    {
+      "id": "user1",
+      "name": "Alice Smith",
+      "email": "alice@example.com",
+      "image": "https://example.com/images/alice.png",
+      "role": "Member/Admin",
+      "department": "Engineering",
+      "organization": "Example Org",
+      "designation": "Software Engineer"
+    }
+  ]
+}
+
+// request for delete group
+{
+  "groupId": "group1"
+}
+
+// response for delete group
+{
+  "status": "success",
+  "message": "Group deleted successfully"
+}
+
+

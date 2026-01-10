@@ -1,0 +1,14 @@
+{
+  "groupsList": [
+    {
+      "id": "group1",
+      "name": "Group One",
+      "image": "https://example.com/images/group1.png"
+    },
+    {
+      "id": "group2",
+      "name": "Group Two",
+      "image": "https://example.com/images/group2.png"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import { ReactQueryProvider } from "../src/Providers/react-query-provider";
+import { ToastProvider } from "../src/Providers/toast-provider";
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -16,7 +17,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ReactQueryProvider>
-      <Component {...pageProps} />
+      <ToastProvider>
+        <Component {...pageProps} />
+      </ToastProvider>
     </ReactQueryProvider>
   );
 }

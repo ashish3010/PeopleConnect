@@ -1,0 +1,46 @@
+// request for signup
+{
+    "email": "user@example.com",
+    "image": "formdata",
+    "name": "John Doe",
+    "contact": "1234567890",
+    "organization": "Example Org",
+    "department": "Engineering",
+    "designation": "Software Engineer",
+    "linkedin": "https://www.linkedin.com/in/johndoe",
+    "github": "https://github.com/johndoe",
+    "website": "https://johndoe.com"
+}
+
+// response for signup
+{
+    "status": "success",
+    "message": "OTP sent to email",
+    "name": "John Doe"
+}
+
+// request for login
+{
+    "email": "user@example.com",
+}
+
+// response for login
+{
+    "status": "success",
+     "message": "OTP sent to email",
+    "name": "John Doe"
+}
+
+
+// request for OTP
+{
+    "otp": "123456",
+}
+
+// response for OTP
+{
+    "status": "success",
+    "message": "OTP verified successfully",
+}
+
+// response for OTP
