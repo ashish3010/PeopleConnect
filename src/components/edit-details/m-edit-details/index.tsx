@@ -1,11 +1,56 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import useSignup from "@/src/hooks/use-signup";
 import Button from "@/src/components/common/Button";
 
-const MobileSignup = () => {
+interface UserInfo {
+  id?: string;
+  name?: string;
+  email?: string;
+  image?: string;
+  department?: string;
+  organization?: string;
+  designation?: string;
+  linkedin?: string;
+  github?: string;
+  website?: string;
+  whatsapp?: string;
+  contact?: string;
+}
+
+interface MobileEditDetailsProps {
+  userInfo?: UserInfo;
+}
+
+const MobileEditDetails = ({
+  userInfo: propUserInfo,
+}: MobileEditDetailsProps) => {
   const router = useRouter();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Get userInfo from props or sessionStorage
+  const getUserInfo = (): UserInfo | undefined => {
+    if (propUserInfo) return propUserInfo;
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("editUserInfo");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.error("Error parsing userInfo from sessionStorage:", e);
+        }
+      }
+    }
+    return undefined;
+  };
+
+  const userInfo = getUserInfo();
+
+  // Navigate back if userInfo is undefined
+  useEffect(() => {
+    if (!userInfo) {
+      router.back();
+    }
+  }, [userInfo, router]);
 
   // Scroll to top when component mounts or route changes
   useEffect(() => {
@@ -33,27 +78,37 @@ const MobileSignup = () => {
       clearTimeout(timeoutId2);
     };
   }, [router.pathname]);
-  const [form, setForm] = useState({
-    email: "",
-    name: "",
-    contact: "",
-    organization: "",
-    department: "",
-    designation: "",
-    linkedin: "",
-    github: "",
-    website: "",
-  });
-  const [image, setImage] = useState<File | null>(null);
 
-  const { mutate: signup, isPending, isError, error, isSuccess } = useSignup();
+  const initialForm = {
+    contact: userInfo?.contact || userInfo?.whatsapp || "",
+    organization: userInfo?.organization || "",
+    department: userInfo?.department || "",
+    designation: userInfo?.designation || "",
+    linkedin: userInfo?.linkedin || "",
+    github: userInfo?.github || "",
+    website: userInfo?.website || "",
+  };
+
+  const [form, setForm] = useState(initialForm);
+  const [image, setImage] = useState<File | null>(null);
+  const initialImage = null; // Track if image was changed
+
+  // Check if form has changed from initial values
+  const hasFormChanged = JSON.stringify(form) !== JSON.stringify(initialForm);
+
+  // Check if image has changed
+  const hasImageChanged = image !== initialImage;
+
+  // Check if image input has an image
+  const hasImage = image !== null;
 
   // Check if required fields are filled
+  const hasRequiredFields =
+    form.contact.trim() !== "" && form.organization.trim() !== "";
+
+  // Enable button if (form changed OR (image changed AND has image)) AND required fields are filled
   const isFormValid =
-    form.email.trim() !== "" &&
-    form.name.trim() !== "" &&
-    form.contact.trim() !== "" &&
-    form.organization.trim() !== "";
+    (hasFormChanged || (hasImageChanged && hasImage)) && hasRequiredFields;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -79,7 +134,7 @@ const MobileSignup = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // API call logic commented out for now
+    // TODO: Add API call logic for updating user details
     // const formData = new FormData();
     // Object.entries(form).forEach(([key, value]) => {
     //   if (value) {
@@ -90,20 +145,8 @@ const MobileSignup = () => {
     //   formData.append("image", image);
     // }
 
-    // signup(formData, {
-    //   onSuccess: (data) => {
-    //     console.log("Signup successful:", data);
-    //     // Navigate to OTP page on successful signup
-    //     router.push("/otp");
-    //   },
-    //   onError: (error) => {
-    //     console.error("Signup error:", error);
-    //     // Error is already available in the error state
-    //   },
-    // });
-
-    // Navigate to OTP page directly (for testing without API)
-    router.push("/otp");
+    // After successful update, navigate back
+    router.back();
   };
 
   return (
@@ -133,7 +176,7 @@ const MobileSignup = () => {
               </svg>
             </button>
             <h1 className="text-lg font-bold text-[var(--text-primary)]">
-              Hi Fix
+              Edit Details
             </h1>
           </div>
         </div>
@@ -144,37 +187,12 @@ const MobileSignup = () => {
             ref={scrollContainerRef}
             className="flex-1 overflow-y-auto px-6 pt-6"
           >
-            {/* Greeting text */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-[var(--text-primary)] leading-tight">
-                Here To Get
-                <br />
-                Welcome!
-              </h2>
-            </div>
-
             {/* Form */}
             <form
               onSubmit={handleSubmit}
-              id="signup-form"
+              id="edit-form"
               className="space-y-6 pb-4"
             >
-              {/* Email input */}
-              <div className="relative">
-                <label className="block text-sm text-[var(--text-muted)] mb-1">
-                  Email <span className="text-[var(--danger)]">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={form.email}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                  required
-                />
-              </div>
-
               {/* Image upload */}
               <div className="relative">
                 <input
@@ -208,22 +226,6 @@ const MobileSignup = () => {
                     </svg>
                   </button>
                 )}
-              </div>
-
-              {/* Name input */}
-              <div className="relative">
-                <label className="block text-sm text-[var(--text-muted)] mb-1">
-                  Name <span className="text-[var(--danger)]">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name"
-                  value={form.name}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                  required
-                />
               </div>
 
               {/* Contact input */}
@@ -317,20 +319,6 @@ const MobileSignup = () => {
                   className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
                 />
               </div>
-
-              {/* Error message */}
-              {isError && (
-                <div className="text-[var(--danger)] text-sm mt-2">
-                  {error?.message || "An error occurred during signup"}
-                </div>
-              )}
-
-              {/* Success message */}
-              {isSuccess && (
-                <div className="text-[var(--success)] text-sm mt-2">
-                  Signup successful! Please check your email for OTP.
-                </div>
-              )}
             </form>
           </div>
         </div>
@@ -339,11 +327,11 @@ const MobileSignup = () => {
         <div className="fixed bottom-0 left-0 right-0 px-6 pb-6 pt-4 bg-[var(--bg-card)] border-t border-[var(--border)] z-10">
           <Button
             type="submit"
-            form="signup-form"
-            disabled={isPending || !isFormValid}
+            form="edit-form"
+            disabled={!isFormValid}
             className="h-10 rounded-xl font-semibold"
           >
-            {isPending ? "Signing Up..." : "Sign Up"}
+            Save
           </Button>
         </div>
       </div>
@@ -351,4 +339,4 @@ const MobileSignup = () => {
   );
 };
 
-export default MobileSignup;
+export default MobileEditDetails;
