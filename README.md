@@ -36,7 +36,7 @@ A modern, privacy-first professional networking platform that helps you connect 
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/ashish3010/PeopleConnect.git
    cd people-connect
    ```
 
