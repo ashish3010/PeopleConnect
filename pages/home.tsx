@@ -1,6 +1,7 @@
 import CentralLoader from "@/src/components/common/Central-loader";
 import dynamic from "next/dynamic";
 import React from "react";
+import useMedia from "@/src/hooks/useMedia";
 
 const MobileHome = dynamic(() => import("@/src/components/home/m-home"), {
   loading: () => <CentralLoader />,
@@ -12,12 +13,13 @@ const DesktopHome = dynamic(() => import("@/src/components/home/d-home"), {
 });
 
 const Home = () => {
-  return (
-    <div>
-      <MobileHome />
-      <DesktopHome />
-    </div>
-  );
+  const { isMobile, isReady } = useMedia();
+
+  if (!isReady) {
+    return <CentralLoader />;
+  }
+
+  return <div>{isMobile ? <MobileHome /> : <DesktopHome />}</div>;
 };
 
 export default Home;

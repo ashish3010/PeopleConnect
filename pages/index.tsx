@@ -1,6 +1,7 @@
 import CentralLoader from "@/src/components/common/Central-loader";
 import dynamic from "next/dynamic";
 import React from "react";
+import useMedia from "@/src/hooks/useMedia";
 
 const MobileGetStarted = dynamic(
   () => import("@/src/components/get-started/m-get-started"),
@@ -18,12 +19,13 @@ const DesktopGetStarted = dynamic(
 );
 
 const GetStarted = () => {
-  return (
-    <div>
-      <MobileGetStarted />
-      <DesktopGetStarted />
-    </div>
-  );
+  const { isMobile, isReady } = useMedia();
+
+  if (!isReady) {
+    return <CentralLoader />;
+  }
+
+  return <div>{isMobile ? <MobileGetStarted /> : <DesktopGetStarted />}</div>;
 };
 
 export default GetStarted;

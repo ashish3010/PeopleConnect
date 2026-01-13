@@ -1,6 +1,7 @@
 import CentralLoader from "@/src/components/common/Central-loader";
 import dynamic from "next/dynamic";
 import React from "react";
+import useMedia from "@/src/hooks/useMedia";
 
 const MobileSignup = dynamic(() => import("@/src/components/signup/m-signup"), {
   loading: () => <CentralLoader />,
@@ -15,12 +16,13 @@ const DesktopSignup = dynamic(
 );
 
 const SignUp = () => {
-  return (
-    <div>
-      <MobileSignup />
-      <DesktopSignup />
-    </div>
-  );
+  const { isMobile, isReady } = useMedia();
+
+  if (!isReady) {
+    return <CentralLoader />;
+  }
+
+  return <div>{isMobile ? <MobileSignup /> : <DesktopSignup />}</div>;
 };
 
 export default SignUp;

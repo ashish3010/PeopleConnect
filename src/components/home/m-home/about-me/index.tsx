@@ -25,7 +25,7 @@ interface AboutMeProps {
 
 const AboutMe = ({
   showHeader = false,
-  headerText = "About Me",
+  headerText,
   userInfo,
   showEditIcon = false,
 }: AboutMeProps) => {
@@ -52,12 +52,12 @@ const AboutMe = ({
   const headerHeight = showHeader ? 24 : 0;
   // Calculate top position: 30vh + header height
   const cardTop = `calc(20vh + ${headerHeight}px)`;
-
+  const pageHeight = `calc(100dvh - ${showHeader ? 0 : 120}px)`;
   return (
     <div style={{ height: "100%" }}>
       <div
         className="bg-[var(--bg-main)] relative"
-        style={{ height: "calc(100dvh - 120px)" }}
+        style={{ height: pageHeight }}
       >
         {/* Floating Edit Icon - Fixed at top */}
         {showEditIcon && (
@@ -121,7 +121,7 @@ const AboutMe = ({
                 </svg>
               </button>
               <h1 className="text-lg font-bold text-[var(--text-primary)]">
-                {headerText}
+                {headerText || user.name}
               </h1>
             </div>
           </div>
@@ -132,13 +132,28 @@ const AboutMe = ({
           className="absolute left-1/2 transform -translate-x-1/2 z-20"
           style={{ top: `calc(${cardTop} - 80px)` }}
         >
-          <div className="relative w-40 h-40 rounded-full overflow-hidden">
-            <Image
-              src={user.image}
-              alt={user.name}
-              fill
-              className="object-cover"
-            />
+          <div
+            className="relative w-40 h-40 rounded-full overflow-hidden p-2"
+            style={{
+              background: !user.image ? `var(--bg-main)` : `transparent`,
+              border: `${!user.image ? "1" : "0"}px solid var(--border)`,
+              boxShadow: `${
+                !user.image ? "0 -10px 30px var(--border)" : "none"
+              }`,
+            }}
+          >
+            <div className="relative w-full h-full rounded-full overflow-hidden">
+              <Image
+                src={
+                  user.image && user.image.trim() !== ""
+                    ? user.image
+                    : "/images/avatar.png"
+                }
+                alt={user.name}
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
 

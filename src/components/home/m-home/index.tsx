@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import HomeDashboard from "./home-dashboard";
 import Groups from "./groups";
 import AboutMe from "./about-me";
@@ -6,15 +6,24 @@ import Help from "./help";
 
 type MenuType = "home" | "groups" | "about-me" | "help";
 
+const menuOrder: MenuType[] = ["home", "groups", "about-me", "help"];
+
 const MobileHome = () => {
   // Load active menu from sessionStorage on mount, default to "home"
   const [activeMenu, setActiveMenu] = useState<MenuType>(() => {
     if (typeof window !== "undefined") {
       const saved = sessionStorage.getItem("activeMenu");
-      return (saved as MenuType) || "home";
+      return (saved as MenuType) || "groups";
     }
-    return "home";
+    return "groups";
   });
+
+  const [prevMenu, setPrevMenu] = useState<MenuType>(activeMenu);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">(
+    "right"
+  );
+  const [isAnimating, setIsAnimating] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   // Save active menu to sessionStorage whenever it changes
   useEffect(() => {
@@ -23,8 +32,27 @@ const MobileHome = () => {
     }
   }, [activeMenu]);
 
-  const renderContent = () => {
-    switch (activeMenu) {
+  // Handle menu change with animation direction
+  const handleMenuChange = (newMenu: MenuType) => {
+    if (newMenu === activeMenu || isAnimating) return;
+
+    const currentIndex = menuOrder.indexOf(activeMenu);
+    const newIndex = menuOrder.indexOf(newMenu);
+    const direction = newIndex > currentIndex ? "left" : "right";
+
+    setSlideDirection(direction);
+    setIsAnimating(true);
+    setPrevMenu(activeMenu);
+    setActiveMenu(newMenu);
+
+    // Reset animation state after animation completes
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  const renderContent = (menu: MenuType) => {
+    switch (menu) {
       case "home":
         return <HomeDashboard />;
       case "groups":
@@ -40,12 +68,39 @@ const MobileHome = () => {
 
   return (
     <div className="md:hidden min-h-screen bg-[var(--bg-card)] flex flex-col pb-0">
-      {/* Page Content */}
+      {/* Page Content with Sliding Animation */}
       <div
-        className="flex-1 overflow-y-auto"
+        className="flex-1 overflow-hidden relative"
         style={{ height: "calc(100dvh - 120px)" }}
+        ref={contentRef}
       >
-        {renderContent()}
+        {/* Previous Content (exiting) */}
+        {isAnimating && (
+          <div
+            className="absolute inset-0 overflow-y-auto"
+            style={{
+              animation:
+                slideDirection === "left"
+                  ? "slideOutToLeft 0.3s ease-in-out"
+                  : "slideOutToRight 0.3s ease-in-out",
+            }}
+          >
+            {renderContent(prevMenu)}
+          </div>
+        )}
+        {/* Current Content (entering) */}
+        <div
+          className="absolute inset-0 overflow-y-auto"
+          style={{
+            animation: isAnimating
+              ? slideDirection === "left"
+                ? "slideInFromRight 0.3s ease-in-out"
+                : "slideInFromLeft 0.3s ease-in-out"
+              : "none",
+          }}
+        >
+          {renderContent(activeMenu)}
+        </div>
       </div>
 
       {/* Bottom Navigation Bar */}
@@ -53,7 +108,7 @@ const MobileHome = () => {
         <div className="flex items-center justify-between px-6 py-3">
           {/* Home Icon */}
           <button
-            onClick={() => setActiveMenu("home")}
+            onClick={() => handleMenuChange("home")}
             className="flex flex-col items-center justify-center"
           >
             <svg
@@ -79,7 +134,7 @@ const MobileHome = () => {
           <div className="flex items-center gap-6">
             {/* Groups Icon */}
             <button
-              onClick={() => setActiveMenu("groups")}
+              onClick={() => handleMenuChange("groups")}
               className="flex flex-col items-center justify-center"
             >
               <svg
@@ -130,7 +185,7 @@ const MobileHome = () => {
 
             {/* About Me Icon */}
             <button
-              onClick={() => setActiveMenu("about-me")}
+              onClick={() => handleMenuChange("about-me")}
               className="flex flex-col items-center justify-center"
             >
               <svg
@@ -157,7 +212,7 @@ const MobileHome = () => {
 
           {/* Help Icon */}
           <button
-            onClick={() => setActiveMenu("help")}
+            onClick={() => handleMenuChange("help")}
             className="flex flex-col items-center justify-center"
           >
             <svg

@@ -1,6 +1,7 @@
 import CentralLoader from "@/src/components/common/Central-loader";
 import dynamic from "next/dynamic";
 import React from "react";
+import useMedia from "@/src/hooks/useMedia";
 
 const MobileOTP = dynamic(() => import("@/src/components/otp/m-otp"), {
   loading: () => <CentralLoader />,
@@ -12,12 +13,13 @@ const DesktopOTP = dynamic(() => import("@/src/components/otp/d-otp"), {
 });
 
 const OTP = () => {
-  return (
-    <div>
-      <MobileOTP />
-      <DesktopOTP />
-    </div>
-  );
+  const { isMobile, isReady } = useMedia();
+
+  if (!isReady) {
+    return <CentralLoader />;
+  }
+
+  return <div>{isMobile ? <MobileOTP /> : <DesktopOTP />}</div>;
 };
 
 export default OTP;

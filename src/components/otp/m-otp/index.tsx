@@ -28,6 +28,7 @@ const MobileOTP = () => {
     // API call logic will be added here later
     // For now, just navigate or handle success
     console.log("OTP submitted:", otp);
+    router.push("/home");
   };
 
   const handleResendOTP = () => {

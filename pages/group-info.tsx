@@ -3,29 +3,29 @@ import dynamic from "next/dynamic";
 import React from "react";
 import useMedia from "@/src/hooks/useMedia";
 
-const MobileEditDetails = dynamic(
-  () => import("@/src/components/edit-details/m-edit-details"),
+const MobileGroupInfo = dynamic(
+  () => import("@/src/components/group-info/m-group-info"),
   {
     loading: () => <CentralLoader />,
     ssr: false,
   }
 );
-const DesktopEditDetails = dynamic(
-  () => import("@/src/components/edit-details/d-edit-details"),
+const DesktopGroupInfo = dynamic(
+  () => import("@/src/components/group-info/d-group-info"),
   {
     loading: () => <CentralLoader />,
     ssr: false,
   }
 );
 
-const EditDetails = () => {
+const GroupInfo = () => {
   const { isMobile, isReady } = useMedia();
 
   if (!isReady) {
     return <CentralLoader />;
   }
 
-  return <div>{isMobile ? <MobileEditDetails /> : <DesktopEditDetails />}</div>;
+  return <div>{isMobile ? <MobileGroupInfo /> : <DesktopGroupInfo />}</div>;
 };
 
-export default EditDetails;
+export default GroupInfo;

@@ -3,12 +3,12 @@
     {
       "id": "group1",
       "name": "Group One",
-      "image": "https://example.com/images/group1.png"
+      "membersCount": 10
     },
     {
       "id": "group2",
       "name": "Group Two",
-      "image": "https://example.com/images/group2.png"
+      "membersCount": 20
     }
   ]
 }

@@ -59,3 +59,70 @@ body {
   color: var(--text-primary);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Hide scrollbars for mobile devices */
+* {
+  /* Firefox */
+  scrollbar-width: none;
+  /* Safari and Chrome */
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Initial states for page transitions to prevent flicker */
+.page-enter-from-right {
+  transform: translateX(100%);
+}
+
+.page-enter-from-left {
+  transform: translateX(-100%);
+}
+
+.mx-width {
+  width: 768px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+}
