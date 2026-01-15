@@ -1,30 +1,32 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import useSignup from "@/src/hooks/use-signup";
 import Button from "@/src/components/common/Button";
+import Input from "@/src/components/common/Input";
+import useAuth from "@/src/hooks/useAuth/useAuth";
+import Header from "../../common/Header";
+import FileInput from "../../common/FileInput";
+import { useToast } from "@/src/Providers/toast-provider";
+import { ApiError } from "@/src/network";
 
 const MobileSignup = () => {
   const router = useRouter();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { signup, isSignupLoading } = useAuth();
+  const { showError } = useToast();
 
-  // Scroll to top when component mounts or route changes
   useEffect(() => {
     const resetScroll = () => {
-      // Reset window scroll
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
 
-      // Reset scrollable container
       if (scrollContainerRef.current) {
         scrollContainerRef.current.scrollTop = 0;
       }
     };
 
-    // Reset immediately
     resetScroll();
 
-    // Also reset after a small delay to ensure DOM is ready
     const timeoutId = setTimeout(resetScroll, 10);
     const timeoutId2 = setTimeout(resetScroll, 100);
 
@@ -33,6 +35,7 @@ const MobileSignup = () => {
       clearTimeout(timeoutId2);
     };
   }, [router.pathname]);
+
   const [form, setForm] = useState({
     email: "",
     name: "",
@@ -46,9 +49,6 @@ const MobileSignup = () => {
   });
   const [image, setImage] = useState<File | null>(null);
 
-  const { mutate: signup, isPending, isError, error, isSuccess } = useSignup();
-
-  // Check if required fields are filled
   const isFormValid =
     form.email.trim() !== "" &&
     form.name.trim() !== "" &&
@@ -67,7 +67,6 @@ const MobileSignup = () => {
 
   const handleRemoveImage = () => {
     setImage(null);
-    // Reset the file input
     const fileInput = document.querySelector(
       'input[type="file"][name="image"]'
     ) as HTMLInputElement;
@@ -76,261 +75,120 @@ const MobileSignup = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // API call logic commented out for now
-    // const formData = new FormData();
-    // Object.entries(form).forEach(([key, value]) => {
-    //   if (value) {
-    //     formData.append(key, value);
-    //   }
-    // });
-    // if (image) {
-    //   formData.append("image", image);
-    // }
-
-    // signup(formData, {
-    //   onSuccess: (data) => {
-    //     console.log("Signup successful:", data);
-    //     // Navigate to OTP page on successful signup
-    //     router.push("/otp");
-    //   },
-    //   onError: (error) => {
-    //     console.error("Signup error:", error);
-    //     // Error is already available in the error state
-    //   },
-    // });
-
-    // Navigate to OTP page directly (for testing without API)
-    router.push("/otp");
+    try {
+      await signup(form);
+      router.push("/otp");
+    } catch (error) {
+      const err = error as ApiError;
+      showError(err.message);
+    }
   };
 
   return (
     <div className="md:hidden">
       <div className="min-h-screen bg-[var(--bg-main)] flex flex-col">
-        {/* Header outside the card */}
-        <div className="w-full mb-4 px-4 pt-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.back()}
-              className="flex items-center justify-center w-8 h-8"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M15 18L9 12L15 6"
-                  stroke="var(--text-primary)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-            <h1 className="text-lg font-bold text-[var(--text-primary)]">
-              Hi Fix
-            </h1>
-          </div>
-        </div>
-
-        {/* Main white card */}
+        <Header title="Sign Up" />
         <div className="w-full bg-[var(--bg-card)] rounded-t-3xl shadow-lg overflow-hidden flex-1 flex flex-col pb-24">
           <div
             ref={scrollContainerRef}
             className="flex-1 overflow-y-auto px-6 pt-6"
           >
-            {/* Greeting text */}
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-[var(--text-primary)] leading-tight">
-                Here To Get
-                <br />
                 Welcome!
               </h2>
             </div>
 
-            {/* Form */}
             <form
               onSubmit={handleSubmit}
               id="signup-form"
               className="space-y-6 pb-4"
             >
-              {/* Email input */}
-              <div className="relative">
-                <label className="block text-sm text-[var(--text-muted)] mb-1">
-                  Email <span className="text-[var(--danger)]">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={form.email}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                  required
-                />
-              </div>
+              <Input
+                type="email"
+                name="email"
+                label="Email"
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
 
-              {/* Image upload */}
-              <div className="relative">
-                <input
-                  type="file"
-                  name="image"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  disabled={!!image}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 pr-10 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary)] file:text-[var(--text-inverse)] hover:file:bg-[var(--primary-hover)] file:cursor-pointer cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-                {image && (
-                  <button
-                    type="button"
-                    onClick={handleRemoveImage}
-                    className="absolute right-0 bottom-2 flex items-center justify-center w-8 h-8 rounded-full hover:bg-[var(--bg-hover)] transition-colors"
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M18 6L6 18M6 6L18 18"
-                        stroke="var(--primary)"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
+              <FileInput
+                name="image"
+                accept="image/*"
+                value={image}
+                onChange={handleImageChange}
+                onRemove={handleRemoveImage}
+              />
 
-              {/* Name input */}
-              <div className="relative">
-                <label className="block text-sm text-[var(--text-muted)] mb-1">
-                  Name <span className="text-[var(--danger)]">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name"
-                  value={form.name}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                  required
-                />
-              </div>
+              <Input
+                type="text"
+                name="name"
+                label="Name"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
 
-              {/* Contact input */}
-              <div className="relative">
-                <label className="block text-sm text-[var(--text-muted)] mb-1">
-                  Contact <span className="text-[var(--danger)]">*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="contact"
-                  placeholder="Contact"
-                  value={form.contact}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                  required
-                />
-              </div>
+              <Input
+                type="tel"
+                name="contact"
+                label="Contact"
+                value={form.contact}
+                onChange={handleChange}
+                required
+              />
 
-              {/* Organization input */}
-              <div className="relative">
-                <label className="block text-sm text-[var(--text-muted)] mb-1">
-                  Organization <span className="text-[var(--danger)]">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="organization"
-                  placeholder="Organization"
-                  value={form.organization}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                  required
-                />
-              </div>
+              <Input
+                type="text"
+                name="organization"
+                label="Organization"
+                value={form.organization}
+                onChange={handleChange}
+                required
+              />
 
-              {/* Department input */}
-              <div className="relative">
-                <input
-                  type="text"
-                  name="department"
-                  placeholder="Department"
-                  value={form.department}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                />
-              </div>
+              <Input
+                type="text"
+                name="department"
+                label="Department"
+                value={form.department}
+                onChange={handleChange}
+              />
 
-              {/* Designation input */}
-              <div className="relative">
-                <input
-                  type="text"
-                  name="designation"
-                  placeholder="Designation"
-                  value={form.designation}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                />
-              </div>
+              <Input
+                type="text"
+                name="designation"
+                label="Designation"
+                value={form.designation}
+                onChange={handleChange}
+              />
 
-              {/* LinkedIn input */}
-              <div className="relative">
-                <input
-                  type="url"
-                  name="linkedin"
-                  placeholder="LinkedIn URL"
-                  value={form.linkedin}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                />
-              </div>
+              <Input
+                type="url"
+                name="linkedin"
+                label="LinkedIn URL"
+                value={form.linkedin}
+                onChange={handleChange}
+              />
 
-              {/* GitHub input */}
-              <div className="relative">
-                <input
-                  type="url"
-                  name="github"
-                  placeholder="GitHub URL"
-                  value={form.github}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                />
-              </div>
+              <Input
+                type="url"
+                name="github"
+                label="GitHub URL"
+                value={form.github}
+                onChange={handleChange}
+              />
 
-              {/* Website input */}
-              <div className="relative">
-                <input
-                  type="url"
-                  name="website"
-                  placeholder="Website URL"
-                  value={form.website}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors"
-                />
-              </div>
-
-              {/* Error message */}
-              {isError && (
-                <div className="text-[var(--danger)] text-sm mt-2">
-                  {error?.message || "An error occurred during signup"}
-                </div>
-              )}
-
-              {/* Success message */}
-              {isSuccess && (
-                <div className="text-[var(--success)] text-sm mt-2">
-                  Signup successful! Please check your email for OTP.
-                </div>
-              )}
+              <Input
+                type="url"
+                name="website"
+                label="Website URL"
+                value={form.website}
+                onChange={handleChange}
+              />
             </form>
           </div>
         </div>
@@ -340,10 +198,11 @@ const MobileSignup = () => {
           <Button
             type="submit"
             form="signup-form"
-            disabled={isPending || !isFormValid}
+            disabled={!isFormValid}
+            loading={isSignupLoading}
             className="h-10 rounded-xl font-semibold"
           >
-            {isPending ? "Signing Up..." : "Sign Up"}
+            {"Sign Up"}
           </Button>
         </div>
       </div>

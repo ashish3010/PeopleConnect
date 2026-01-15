@@ -88,6 +88,13 @@ people-connect/
 │   ├── hooks/          # Custom React hooks
 │   │   ├── useMedia.tsx    # Media query hook
 │   │   └── use-signup.tsx  # Signup form hook
+│   ├── mock/           # Mirage JS mock API server
+│   │   ├── index.ts         # Server setup and config
+│   │   ├── mirage.ts        # API routes definition
+│   │   ├── req-handler/     # Request handler functions
+│   │   │   └── auth.ts      # Auth endpoints
+│   │   └── seeds/           # Mock database seed data
+│   │       └── users.ts     # User seed data
 │   └── Providers/      # Context providers
 │       ├── react-query-provider.tsx
 │       └── toast-provider.tsx
@@ -189,6 +196,53 @@ Components are conditionally rendered based on device type using the `useMedia` 
 - **React Context**: Global toast notifications
 - **Session Storage**: User data persistence across page refreshes
 - **Local State**: Component-level state with React hooks
+
+## 🎭 Mock API with Mirage JS
+
+The application includes a **modular Mirage JS** setup for mock API during development.
+
+### Architecture
+
+```
+src/mock/
+├── index.ts         # Server setup & configuration
+├── mirage.ts        # API routes (endpoints)
+├── req-handler/     # Business logic for each API
+│   └── auth.ts     # Authentication handlers
+└── seeds/           # Mock database data
+    └── users.ts    # Test users
+```
+
+### Features
+
+✅ **Modular Design** - Separate files for routes, handlers, and data  
+✅ **Easy Configuration** - Enable/disable in one place  
+✅ **Realistic Data** - Seed data acts as a mock database  
+✅ **Authentication** - Signup, login, OTP verification
+
+### Configuration
+
+Edit `src/mock/index.ts`:
+
+```typescript
+export const mirageConfig = {
+  enabled: true, // Set false to disable mock server
+  logging: true, // See requests in console
+  timing: 400, // Response delay in ms
+};
+```
+
+### Test Users
+
+```
+user@example.com   - John Doe (Member)
+alice@example.com  - Alice Smith (Admin)
+bob@example.com    - Bob Johnson (Member)
+```
+
+**Note:** Any 6-digit OTP works for testing
+
+See [src/mock/README.md](./src/mock/README.md) for detailed documentation
 
 ## 🎭 Animations
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Button from "@/src/components/common/Button";
+import Input from "../../common/Input";
+import Header from "../../common/Header";
 
 const MobileOTP = () => {
   const router = useRouter();
@@ -42,34 +44,7 @@ const MobileOTP = () => {
   return (
     <div className="md:hidden">
       <div className="min-h-screen bg-[var(--bg-main)] flex flex-col">
-        {/* Header outside the card */}
-        <div className="w-full mb-4 px-4 pt-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.back()}
-              className="flex items-center justify-center w-8 h-8"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M15 18L9 12L15 6"
-                  stroke="var(--text-primary)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-            <h1 className="text-lg font-bold text-[var(--text-primary)]">
-              Hi Fix
-            </h1>
-          </div>
-        </div>
+        <Header title="OTP Verification" />
 
         {/* Main white card */}
         <div className="w-full bg-[var(--bg-card)] rounded-t-3xl shadow-lg overflow-hidden flex-1 flex flex-col pb-24">
@@ -91,17 +66,13 @@ const MobileOTP = () => {
             >
               {/* OTP input */}
               <div className="relative">
-                <label className="block text-sm text-[var(--text-muted)] mb-1">
-                  OTP <span className="text-[var(--danger)]">*</span>
-                </label>
-                <input
+                <Input
                   type="text"
                   name="otp"
-                  placeholder="Enter 6-digit OTP"
+                  label="OTP"
                   value={otp}
                   onChange={handleChange}
                   maxLength={6}
-                  className="w-full bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--primary)] outline-none pb-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base transition-colors text-center text-2xl tracking-widest"
                   required
                 />
               </div>

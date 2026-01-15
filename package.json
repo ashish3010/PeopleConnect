@@ -11,6 +11,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.90.16",
     "@types/react-window": "^1.8.8",
+    "axios": "^1.13.2",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -23,6 +24,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "miragejs": "^0.1.48",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
