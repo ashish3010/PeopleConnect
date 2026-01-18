@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import CentralLoader from "@/src/components/common/Central-loader";
-import useMedia from "@/src/hooks/useMedia";
+import useMedia from "@/src/hooks/useMedia/useMedia";
 
 interface UserInfo {
   id: string;

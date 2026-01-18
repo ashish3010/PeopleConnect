@@ -78,7 +78,9 @@ const MobileSignup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signup(form);
+      const response = await signup(form);
+      sessionStorage.setItem("user_name", response.name || "");
+      sessionStorage.setItem("user_email", form.email);
       router.push("/otp");
     } catch (error) {
       const err = error as ApiError;

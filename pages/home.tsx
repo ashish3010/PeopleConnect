@@ -1,7 +1,7 @@
 import CentralLoader from "@/src/components/common/Central-loader";
 import dynamic from "next/dynamic";
 import React from "react";
-import useMedia from "@/src/hooks/useMedia";
+import useMedia from "@/src/hooks/useMedia/useMedia";
 
 const MobileHome = dynamic(() => import("@/src/components/home/m-home"), {
   loading: () => <CentralLoader />,

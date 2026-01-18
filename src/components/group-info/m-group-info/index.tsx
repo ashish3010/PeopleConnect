@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { List } from "react-window";
+import SideMenu from "../../common/SideMenu";
+import { StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 interface Member {
   id: string;
@@ -423,115 +425,22 @@ const MobileGroupInfo = () => {
             menuRefs.current[member.id] = el;
           }}
         >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenMenuId(openMenuId === member.id ? null : member.id);
-            }}
-            className="flex-shrink-0 p-2"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z"
-                fill="var(--text-muted)"
-                stroke="var(--text-muted)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z"
-                fill="var(--text-muted)"
-                stroke="var(--text-muted)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z"
-                fill="var(--text-muted)"
-                stroke="var(--text-muted)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          {/* Dropdown Menu */}
-          {openMenuId === member.id && (
-            <div
-              className="absolute right-0 top-full mt-2 rounded-lg shadow-xl border border-[var(--border)] min-w-[180px] overflow-hidden"
-              style={{
-                backgroundColor: "#ffffff",
-                zIndex: 99999,
-              }}
-            >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleMakeAdmin(member.id);
-                }}
-                className="w-full px-4 py-3 text-left text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors flex items-center gap-3 first:rounded-t-lg"
-                style={{ backgroundColor: "#ffffff" }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                    stroke="var(--primary)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    fill="none"
-                  />
-                </svg>
-                <span>Make group admin</span>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRemoveMember(member.id, member.name);
-                }}
-                className="w-full px-4 py-3 text-left text-sm text-[var(--danger)] hover:bg-[var(--bg-hover)] transition-colors flex items-center gap-3 last:rounded-b-lg"
-                style={{ backgroundColor: "#ffffff" }}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M3 6H5H21M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z"
-                    stroke="var(--danger)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M10 11V17M14 11V17"
-                    stroke="var(--danger)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span>Remove</span>
-              </button>
-            </div>
-          )}
+          <SideMenu
+            onMenuClick={() => setOpenMenuId(member.id)}
+            showMenu={openMenuId === member.id}
+            menuItems={[
+              {
+                icon: <StarIcon className="w-5 h-5 text-[var(--primary)]" />,
+                label: "Make group admin",
+                onClick: () => handleMakeAdmin(member.id),
+              },
+              {
+                icon: <TrashIcon className="w-5 h-5 text-[var(--danger)]" />,
+                label: "Remove",
+                onClick: () => handleRemoveMember(member.id, member.name),
+              },
+            ]}
+          />
         </div>
       </div>
     );

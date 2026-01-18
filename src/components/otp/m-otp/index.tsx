@@ -3,11 +3,25 @@ import { useRouter } from "next/router";
 import Button from "@/src/components/common/Button";
 import Input from "../../common/Input";
 import Header from "../../common/Header";
+import useAuth from "@/src/hooks/useAuth/useAuth";
+import { useToast } from "@/src/Providers/toast-provider";
+import { ApiError } from "@/src/network";
+import Spinner from "../../common/Spinner";
 
 const MobileOTP = () => {
   const router = useRouter();
   const [otp, setOtp] = useState("");
   const [resendTimer, setResendTimer] = useState(60);
+  const { resendOTP, isResendOTPLoading, verifyOTP, isVerifyOTPLoading } =
+    useAuth();
+  const { showSuccess, showError } = useToast();
+
+  useEffect(() => {
+    const userEmail = sessionStorage.getItem("user_email");
+    if (!userEmail) {
+      router.push("/signup");
+    }
+  }, [router]);
 
   useEffect(() => {
     if (resendTimer > 0) {
@@ -25,18 +39,28 @@ const MobileOTP = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // API call logic will be added here later
-    // For now, just navigate or handle success
-    console.log("OTP submitted:", otp);
-    router.push("/home");
+
+    try {
+      await verifyOTP({ otp });
+      router.push("/home");
+    } catch (error) {
+      const err = error as ApiError;
+      showError(err.message);
+    }
   };
 
-  const handleResendOTP = () => {
-    // API call logic will be added here later
-    console.log("Resending OTP...");
-    setResendTimer(60); // Reset timer to 60 seconds
+  const handleResendOTP = async () => {
+    const userEmail = sessionStorage.getItem("user_email") || "";
+    try {
+      const response = await resendOTP({ email: userEmail });
+      setResendTimer(60);
+      showSuccess(response.message);
+    } catch (error) {
+      const err = error as ApiError;
+      showError(err.message);
+    }
   };
 
   const isFormValid = otp.trim().length === 6;
@@ -53,8 +77,6 @@ const MobileOTP = () => {
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-[var(--text-primary)] leading-tight">
                 Enter OTP
-                <br />
-                Verification Code
               </h2>
             </div>
 
@@ -83,12 +105,13 @@ const MobileOTP = () => {
                   type="button"
                   onClick={handleResendOTP}
                   disabled={resendTimer > 0}
-                  className="text-sm font-bold text-[var(--primary)] hover:text-[var(--primary-hover)] disabled:text-[var(--text-muted)] disabled:cursor-not-allowed transition-colors"
+                  className="text-sm font-bold text-[var(--primary)] hover:text-[var(--primary-hover)] disabled:text-[var(--text-muted)] disabled:cursor-not-allowed transition-colors flex items-center gap-2 px-1"
                 >
                   {resendTimer > 0
                     ? `Resend OTP in ${resendTimer}s`
                     : "Resend OTP"}
                 </button>
+                {isResendOTPLoading && <Spinner size="xs" />}
               </div>
             </form>
           </div>
@@ -100,6 +123,7 @@ const MobileOTP = () => {
             type="submit"
             form="otp-form"
             disabled={!isFormValid}
+            loading={isVerifyOTPLoading}
             className="h-10 rounded-xl font-semibold"
           >
             Verify OTP

@@ -1,4 +1,4 @@
-import { signUpRes, resendOTPRes } from "../seeds/auth";
+import { signUpRes, resendOTPRes, verifyOTPRes } from "../seeds/auth";
 
 export const handleSignup = () => {
   return signUpRes;
@@ -6,4 +6,8 @@ export const handleSignup = () => {
 
 export const handleResendOTP = () => {
   return resendOTPRes;
+};
+
+export const handleVerifyOTP = () => {
+  return verifyOTPRes;
 };
