@@ -3,12 +3,20 @@ import HomeDashboard from "./home-dashboard";
 import Groups from "./groups";
 import AboutMe from "./about-me";
 import Help from "./help";
+import useDashboard from "@/src/hooks/useDashboard/useDashboard";
+import CentralLoader from "../../common/Central-loader";
+import ErrorComponent from "../../common/Error";
+import { ApiError } from "@/src/network";
+import { useQueryClient } from "@tanstack/react-query";
+import { Group } from "@/src/hooks/useDashboard/types";
 
 type MenuType = "home" | "groups" | "about-me" | "help";
 
 const menuOrder: MenuType[] = ["home", "groups", "about-me", "help"];
 
 const MobileHome = () => {
+  const { dashboardData, isDashboardLoading, dashboardError } = useDashboard();
+  const queryClient = useQueryClient();
   // Load active menu from sessionStorage on mount, default to "home"
   const [activeMenu, setActiveMenu] = useState<MenuType>(() => {
     if (typeof window !== "undefined") {
@@ -24,6 +32,13 @@ const MobileHome = () => {
   );
   const [isAnimating, setIsAnimating] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  
+  // Log dashboard data when loaded
+  useEffect(() => {
+    if (dashboardData) {
+      console.log("Dashboard Data:", dashboardData);
+    }
+  }, [dashboardData]);
 
   // Save active menu to sessionStorage whenever it changes
   useEffect(() => {
@@ -54,17 +69,41 @@ const MobileHome = () => {
   const renderContent = (menu: MenuType) => {
     switch (menu) {
       case "home":
-        return <HomeDashboard />;
+        return <HomeDashboard dashboardData={dashboardData} />;
       case "groups":
-        return <Groups />;
+        return <Groups groupsData={dashboardData?.groups || [] as Group[]} moreGroupsAvailable={dashboardData?.moreGroupsAvailable} />;
       case "about-me":
-        return <AboutMe showEditIcon={true} />;
+        return <AboutMe showEditIcon={true} userInfo={dashboardData?.userInfo} />;
       case "help":
         return <Help />;
       default:
-        return <HomeDashboard />;
+        return <HomeDashboard dashboardData={dashboardData} />;
     }
   };
+  
+  // Show loading state
+  if (isDashboardLoading) {
+    return (
+      <CentralLoader label='Fetching user info...'/>
+    );
+  }
+  
+  // Show error state
+  if (dashboardError) {
+    console.log(dashboardError);
+    const apiError = dashboardError as ApiError;
+    const errorMessage = apiError?.data?.message;
+    const errorDescription = (apiError?.data?.description as string);
+
+    return (
+      <ErrorComponent 
+      message={errorMessage} 
+      description={errorDescription} 
+      buttonOnClick={() => {
+        queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      }} />
+    );
+  }
 
   return (
     <div className="md:hidden min-h-screen bg-[var(--bg-card)] flex flex-col pb-0">

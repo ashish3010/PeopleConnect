@@ -1,7 +1,9 @@
 import React from "react";
 import Image from "next/image";
+import { DashboardResponse } from "@/src/hooks/useDashboard/types";
 
-const HomeDashboard = () => {
+const HomeDashboard = ({ dashboardData }: { dashboardData: DashboardResponse | undefined }) => {
+  const { name, image } = dashboardData?.userInfo || {};
   return (
     <div className="min-h-screen bg-[var(--bg-card)] flex flex-col">
       <div className="relative bg-[var(--bg-main)] rounded-bl-[48px] rounded-br-[48px]">
@@ -11,20 +13,20 @@ const HomeDashboard = () => {
             {/* Left side - Greeting */}
             <div className="flex flex-col">
               <h1 className="text-2xl font-bold text-[var(--primary)] mb-1">
-                Hi Smitty
+                Hi {name}
               </h1>
               <p className="text-sm text-[var(--text-muted)]">How are you?</p>
             </div>
 
             {/* Right side - Profile Picture */}
-            <div className="w-16 h-16 rounded-2xl bg-white overflow-hidden shadow-md relative">
+            {image && image.trim() !== "" && <div className="w-16 h-16 rounded-2xl bg-white overflow-hidden shadow-md relative">
               <Image
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop"
+                src={image?.trim() || ""}
                 alt="Profile"
                 fill
                 className="object-cover"
               />
-            </div>
+            </div>}
           </div>
 
           {/* Content Section */}

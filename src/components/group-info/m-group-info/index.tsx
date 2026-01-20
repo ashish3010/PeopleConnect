@@ -4,6 +4,8 @@ import Image from "next/image";
 import { List } from "react-window";
 import SideMenu from "../../common/SideMenu";
 import { StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import Header from "../../common/Header";
+import SearchBox from "../../common/SearchBox";
 
 interface Member {
   id: string;
@@ -463,88 +465,17 @@ const MobileGroupInfo = () => {
       }}
     >
       {/* Top Header Section */}
-      <div className="bg-[var(--bg-main)] pt-4 pb-4 px-4 flex-shrink-0 z-30">
-        {/* Back Arrow and Title */}
-        <div className="flex items-center gap-3 mb-4">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center justify-center"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M19 12H5M5 12L12 19M5 12L12 5"
-                stroke="var(--text-primary)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <h1 className="text-lg font-bold text-[var(--text-primary)]">
-            {group.name}
-          </h1>
-        </div>
-
-        {/* Search Bar and Filter */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 relative">
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                  stroke="var(--text-muted)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[var(--bg-card)] rounded-lg pl-10 pr-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none border-0"
-            />
-          </div>
-          <button className="w-10 h-10 bg-[var(--bg-card)] rounded-lg flex items-center justify-center flex-shrink-0">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4 6H20M4 12H20M4 18H20"
-                stroke="var(--text-muted)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+      <div className="bg-[var(--bg-main)] flex-shrink-0 z-30">
+        <Header title={group.name} />
+        <div className="px-4 pb-4">
+        <SearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         </div>
       </div>
 
-      {/* Main Content Area - Members List */}
       <div
         className="flex-1 bg-[var(--bg-card)] rounded-t-3xl flex flex-col relative min-h-0"
         style={{ marginBottom: "88px" }}
       >
-        {/* Extended white background to cover footer area */}
         <div
           className="absolute bottom-0 left-0 right-0 bg-[var(--bg-card)]"
           style={{ height: "88px", bottom: "-88px" }}

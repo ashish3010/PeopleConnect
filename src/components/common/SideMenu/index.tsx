@@ -1,10 +1,14 @@
 import React from "react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import Spinner from "../Spinner";
 
 interface MenuItem {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
+  loading?: boolean;
+  disabledTooltip?: string;
+  disabled?: boolean;
 }
 interface SideMenuProps {
   onMenuClick: () => void;
@@ -37,9 +41,12 @@ const SideMenu = ({ onMenuClick, showMenu, menuItems }: SideMenuProps) => {
                   e.stopPropagation();
                   item.onClick();
                 }}
-              >
+                disabled={item.disabled}
+                title={item.disabledTooltip}
+                    >
                 {item.icon}
                 {item.label}
+                {item.loading && <Spinner size="xs" color="var(--primary)" />}
               </button>
             ))}
         </div>
